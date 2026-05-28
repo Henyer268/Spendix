@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradex</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="auth-container">
+    <h1>Gradex</h1>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="login">Iniciar sesión</button>
+      <button class="tab" data-tab="register">Registrarse</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="login" class="form-section active">
+      <input type="email" id="login-email" placeholder="Correo">
+      <input type="password" id="login-password" placeholder="Contraseña">
+      <button id="btn-login">Entrar</button>
+      <p id="login-error" class="error"></p>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="register" class="form-section">
+      <input type="text" id="reg-name" placeholder="Nombre completo">
+      <input type="email" id="reg-email" placeholder="Correo">
+      <input type="password" id="reg-password" placeholder="Contraseña">
+      <div class="role-select">
+        <label>
+          <input type="radio" name="role" value="teacher"> Profesor
+        </label>
+        <label>
+          <input type="radio" name="role" value="student" checked> Estudiante
+        </label>
+      </div>
+      <button id="btn-register">Crear cuenta</button>
+      <p id="register-error" class="error"></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { login, register, redirectByRole } from './js/auth.js'
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab, .form-section').forEach(el => el.classList.remove('active'))
+        tab.classList.add('active')
+        document.getElementById(tab.dataset.tab).classList.add('active')
+      })
+    })
+
+    // Login
+    document.getElementById('btn-login').addEventListener('click', async () => {
+      const email = document.getElementById('login-email').value
+      const password = document.getElementById('login-password').value
+      const { role, error } = await login(email, password)
+      if (error) return document.getElementById('login-error').textContent = error.message
+      redirectByRole(role)
+    })
+
+    // Registro
+    document.getElementById('btn-register').addEventListener('click', async () => {
+      const fullName = document.getElementById('reg-name').value
+      const email = document.getElementById('reg-email').value
+      const password = document.getElementById('reg-password').value
+      const role = document.querySelector('input[name="role"]:checked').value
+      const { error } = await register(fullName, email, password, role)
+      if (error) return document.getElementById('register-error').textContent = error.message
+      redirectByRole(role)
+    })
+  </script>
+</body>
+</html>

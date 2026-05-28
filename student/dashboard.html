@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradex | Estudiante</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/student.css">
+</head>
+<body>
+  <header>
+    <h1>Gradex</h1>
+    <div class="header-right">
+      <span id="user-name"></span>
+      <button id="btn-logout">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-header">
+      <h2>Mis cursos</h2>
+      <button id="btn-join">+ Unirse a curso</button>
+    </div>
+
+    <div id="courses-grid" class="courses-grid"></div>
+  </main>
+
+  <!-- Modal unirse -->
+  <div id="modal-join" class="modal hidden">
+    <div class="modal-box">
+      <h3>Unirse a curso</h3>
+      <input type="text" id="join-code" placeholder="Código del curso">
+      <div class="modal-actions">
+        <button id="btn-cancel">Cancelar</button>
+        <button id="btn-join-confirm">Unirse</button>
+      </div>
+      <p id="join-error" class="error"></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { getProfile, logout } from '../js/auth.js'
+    import { getEnrolledCourses, joinCourse } from '../js/student/dashboard.js'
+
+    const profile = await getProfile()
+    if (!profile || profile.role !== 'student') window.location.href = '../index.html'
+
+    document.getElementById('user-name').textContent = profile.full_name
+    document.getElementById('btn-logout').addEventListener('click', logout)
+
+    async function loadCourses() {
+      const courses = await getEnrolledCourses(profile.id)
+      const grid = document.getElementById('courses-grid')
+      grid.innerHTML = ''
+      if (!courses.length) {
+        grid.innerHTML = '<p class="empty">No estás inscrito en ningún curso aún.</p>'
+        return
+      }
+      courses.forEach(e => {
+        const card = document.createElement('div')
+        card.className = 'course-card'
+        card.innerHTML = `
+          <h3>${e.courses.name}</h3>
+          <p class="code">Código: <strong>${e.courses.code}</strong></p>
+          <button onclick="window.location.href='course.html?id=${e.courses.id}'">Ver curso</button>
+        `
+        grid.appendChild(card)
+      })
+    }
+
+    loadCourses()
+
+    // Modal unirse
+    const modal = document.getElementById('modal-join')
+    document.getElementById('btn-join').addEventListener('click', () => modal.classList.remove('hidden'))
+    document.getElementById('btn-cancel').addEventListener('click', () => modal.classList.add('hidden'))
+
+    document.getElementById('btn-join-confirm').addEventListener('click', async () => {
+      const code = document.getElementById('join-code').value.trim().toUpperCase()
+      if (!code) return document.getElementById('join-error').textContent = 'Escribe el código'
+      const { error } = await joinCourse(code, profile.id)
+      if (error) return document.getElementById('join-error').textContent = error.message
+      modal.classList.add('hidden')
+      document.getElementById('join-code').value = ''
+      loadCourses()
+    })
+  </script>
+</body>
+</html>

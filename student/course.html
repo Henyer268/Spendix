@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradex | Curso</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/student.css">
+</head>
+<body>
+  <header>
+    <h1>Gradex</h1>
+    <div class="header-right">
+      <span id="user-name"></span>
+      <button id="btn-logout">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main>
+    <a class="back" href="dashboard.html">← Mis cursos</a>
+
+    <div class="section-header">
+      <div>
+        <h2 id="course-name"></h2>
+      </div>
+    </div>
+
+    <div id="assignments-list" class="assignments-list"></div>
+  </main>
+
+  <script type="module">
+    import { getProfile, logout } from '../js/auth.js'
+    import { getCourse, getAssignments } from '../js/student/course.js'
+
+    const params = new URLSearchParams(window.location.search)
+    const courseId = params.get('id')
+    if (!courseId) window.location.href = 'dashboard.html'
+
+    const profile = await getProfile()
+    if (!profile || profile.role !== 'student') window.location.href = '../index.html'
+
+    document.getElementById('user-name').textContent = profile.full_name
+    document.getElementById('btn-logout').addEventListener('click', logout)
+
+    const course = await getCourse(courseId)
+    document.getElementById('course-name').textContent = course.name
+
+    async function loadAssignments() {
+      const assignments = await getAssignments(courseId)
+      const list = document.getElementById('assignments-list')
+      list.innerHTML = ''
+      if (!assignments.length) {
+        list.innerHTML = '<p class="empty">No hay tareas en este curso aún.</p>'
+        return
+      }
+      assignments.forEach(a => {
+        const item = document.createElement('div')
+        item.className = 'assignment-item'
+        item.innerHTML = `
+          <div>
+            <h4>${a.title}</h4>
+            <p class="due">Entrega: ${a.due_date ? new Date(a.due_date).toLocaleString() : 'Sin fecha'}</p>
+          </div>
+          <button onclick="window.location.href='assignment.html?id=${a.id}'">Ver tarea</button>
+        `
+        list.appendChild(item)
+      })
+    }
+
+    loadAssignments()
+  </script>
+</body>
+</html>
