@@ -823,7 +823,7 @@ let toastTimer;
     const btn = document.getElementById('btn-save');
     btn.disabled = true; btn.textContent = 'Guardando...';
 
-    const { error } = await sb.from('movimientos').insert([{ tipo: tipoActual, monto, categoria, descripcion: descripcion || null, fecha }]);
+    const { error } = await sb.from('movimientos').insert([{ tipo: tipoActual, monto, categoria, descripcion: descripcion || null, fecha, user_id: currentUser.id }]);
 
     btn.disabled = false; btn.textContent = 'Guardar';
     if (error) { showToast('Error: ' + error.message); return; }
