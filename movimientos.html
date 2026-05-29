@@ -943,7 +943,7 @@
     const btn = document.getElementById('btn-save');
     btn.disabled = true; btn.textContent = 'Guardando...';
 
-    const payload = { tipo: tipoActual, monto, categoria, descripcion: descripcion || null, fecha };
+    const payload = { tipo: tipoActual, monto, categoria, descripcion: descripcion || null, fecha, user_id: currentUser.id };
     const { error } = await sb.from('movimientos').insert([payload]);
 
     btn.disabled = false; btn.textContent = 'Guardar';
