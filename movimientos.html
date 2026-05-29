@@ -710,6 +710,7 @@
     const name = currentUser.user_metadata?.full_name || currentUser.email || '';
     const initials = name.split(' ').filter(Boolean).slice(0,2).map(w => w[0].toUpperCase()).join('') || '??';
     document.querySelectorAll('.avatar').forEach(el => el.textContent = initials);
+    cargarDatos(); // ← AQUÍ
   })();
 
   async function logout() {
