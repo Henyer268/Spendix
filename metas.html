@@ -996,7 +996,7 @@
     const btn = document.getElementById('btn-save-meta');
     btn.disabled = true; btn.textContent = 'Guardando...';
 
-    const payload = { nombre, objetivo, fecha_limite: fecha, icono: iconoSeleccionado };
+    const payload = { nombre, objetivo, fecha_limite: fecha, icono: iconoSeleccionado, user_id: currentUser.id };
 
     let error;
     if (editandoId) {
