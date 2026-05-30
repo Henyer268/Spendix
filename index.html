@@ -240,6 +240,14 @@
     .loading .btn-text { display: none; }
     .loading .google-icon { display: none; }
   </style>
+  <link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0d0d0f" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
 </head>
 <body>
 
