@@ -841,6 +841,33 @@ let toastTimer;
   }
 
   cargarDatos();
+
+// ─── Push Notifications ───
+const VAPID_PUBLIC = 'BC1c9y835ViifO0vXE4r2lScQV8tzfmngypwYq7-HIyKrb0c5f471EYLySrUvzUV_JdfZRiy-CmxU3Yv2fFF_RU';
+
+async function registrarPush() {
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
+  
+  const permiso = await Notification.requestPermission();
+  if (permiso !== 'granted') return;
+
+  const reg = await navigator.serviceWorker.ready;
+  const sub = await reg.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: VAPID_PUBLIC
+  });
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return;
+
+  await sb.from('push_subscriptions').upsert({
+    user_id: session.user.id,
+    subscription: sub.toJSON()
+  });
+}
+
+registrarPush();
+
 </script>
 
 <div class="toast" id="toast"></div>
