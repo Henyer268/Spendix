@@ -630,7 +630,8 @@
       <option value="Servicios">Servicios</option>
       <option value="Ocio">Ocio</option>
       <option value="Salario">Salario</option>
-      <option value="Freelance">Freelance</option>
+      <option value="Encargos">Encargos</option>
+      <option value="Trabajos">Trabajos</option>
       <option value="Otros">Otros</option>
     </select>
     <div class="filtro-tipo">
@@ -675,6 +676,8 @@
         <option value="Transporte">Transporte</option>
         <option value="Servicios">Servicios</option>
         <option value="Ocio">Ocio</option>
+        <option value="Ropa">Ropa</option>
+        <option value="Relaciones">Relaciones</option>
         <option value="Otros">Otros</option>
       </select>
     </div>
@@ -723,7 +726,7 @@
   const CAT_ICONS = {
     Comida: 'ti-shopping-cart', Transporte: 'ti-bus',
     Servicios: 'ti-wifi', Ocio: 'ti-device-gamepad-2',
-    Salario: 'ti-building-bank', Freelance: 'ti-briefcase', Otros: 'ti-dots'
+    Salario: 'ti-building-bank', Encargos: 'ti-package', Trabajos: 'ti-hammer', Ropa: 'ti-shirt', Relaciones: 'ti-heart', Otros: 'ti-dots'
   };
 
   const now = new Date();
@@ -931,8 +934,8 @@
     document.getElementById('btn-gasto').className = 'tipo-btn' + (t === 'gasto' ? ' active-gasto' : '');
     document.getElementById('btn-ingreso').className = 'tipo-btn' + (t === 'ingreso' ? ' active-ingreso' : '');
     document.getElementById('inp-categoria').innerHTML = t === 'ingreso'
-      ? '<option value="Salario">Salario</option><option value="Freelance">Freelance</option><option value="Otros">Otros</option>'
-      : '<option value="Comida">Comida</option><option value="Transporte">Transporte</option><option value="Servicios">Servicios</option><option value="Ocio">Ocio</option><option value="Otros">Otros</option>';
+      ? '<option value="Salario">Salario</option><option value="Encargos">Encargos</option><option value="Trabajos">Trabajos</option><option value="Otros">Otros</option>'
+      : '<option value="Comida">Comida</option><option value="Transporte">Transporte</option><option value="Servicios">Servicios</option><option value="Ocio">Ocio</option><option value="Ropa">Ropa</option><option value="Relaciones">Relaciones</option><option value="Otros">Otros</option>';
   }
 
   async function guardar() {
