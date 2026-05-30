@@ -1017,8 +1017,8 @@ async function enviarNotificacion(titulo, cuerpo) {
   const reg = await navigator.serviceWorker.ready;
   reg.showNotification(titulo, {
     body: cuerpo,
-    icon: '/icon-192.png',
-    badge: '/icon-192.png'
+    icon: '/notification-icon-192.png',
+    badge: '/notification-icon-96.png'
   });
 }
 
