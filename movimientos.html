@@ -961,8 +961,9 @@
     btn.disabled = false; btn.textContent = 'Guardar';
     if (error) { showToast('Error: ' + error.message); return; }
     closeModal();
-    showToast('Movimiento guardado ✓');
-    cargarDatos();
+showToast('Movimiento guardado ✓');
+cargarDatos();
+if (tipoActual === 'gasto') await verificarPresupuesto();
   }
 
   /* ─── TOAST ─── */
@@ -985,6 +986,42 @@
 
   cargarDatos();
   
+async function verificarPresupuesto() {
+  const now = new Date();
+  const inicio = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+  const fin = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().split('T')[0];
+
+  const { data } = await sb.from('movimientos')
+    .select('tipo, monto')
+    .gte('fecha', inicio)
+    .lte('fecha', fin);
+
+  if (!data) return;
+
+  const ingresos = data.filter(m => m.tipo === 'ingreso').reduce((a,m) => a + parseFloat(m.monto), 0);
+  const gastos = data.filter(m => m.tipo === 'gasto').reduce((a,m) => a + parseFloat(m.monto), 0);
+
+  if (ingresos === 0) return;
+
+  const pct = (gastos / ingresos) * 100;
+
+  if (pct >= 100) {
+    await enviarNotificacion('⚠️ Presupuesto excedido', `Tus gastos superaron tus ingresos de este mes`);
+  } else if (pct >= 80) {
+    await enviarNotificacion('📊 Alerta de gastos', `Llevas el ${Math.round(pct)}% de tus ingresos gastados este mes`);
+  }
+}
+
+async function enviarNotificacion(titulo, cuerpo) {
+  if (Notification.permission !== 'granted') return;
+  const reg = await navigator.serviceWorker.ready;
+  reg.showNotification(titulo, {
+    body: cuerpo,
+    icon: '/icon-192.png',
+    badge: '/icon-192.png'
+  });
+}
+
 </script>
 </body>
 </html>
